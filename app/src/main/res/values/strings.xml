@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Triple Trash</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="bio">
+        <item>n21</item>
+        <item>n5</item>
+        <item>n13</item>
+        <item>n11</item>
+        <item>n10</item>
+        <item>n4</item>
+        <item>n8</item>
+        <item>n9</item>
+    </string-array>
+    <string-array name="rest">
+        <item>n1</item>
+        <item>n2</item>
+        <item>n12</item>
+        <item>n18</item>
+        <item>n7</item>
+        <item>n15</item>
+        <item>n16</item>
+    </string-array>
+    <string-array name="reclye">
+        <item>n22</item>
+        <item>n6</item>
+        <item>n19</item>
+        <item>n14</item>
+        <item>n20</item>
+        <item>n24</item>
+        <item>n17</item>
+    </string-array>
+</resources>
