@@ -142,8 +142,8 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/space4"
             android:layout_toStartOf="@+id/space4"
-            android:background="@drawable/polygone"
-            android:focusable="true">
+            android:focusable="true"
+            android:id="@+id/RelativeLayoutPicutre">
 
             <Space
                 android:id="@+id/space5"
@@ -162,7 +162,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignRight="@+id/space5"
-                android:background="@android:color/darker_gray"></FrameLayout>
+                android:background="@android:color/transparent"/>
 
             <FrameLayout
                 android:id="@+id/framelayout_recyle"
@@ -174,7 +174,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignRight="@+id/space5"
                 android:layout_below="@+id/frameLayout_rest"
-                android:background="@android:color/darker_gray" />
+                android:background="@android:color/transparent" />
 
             <FrameLayout
                 android:id="@+id/framelayout_bio"
@@ -183,12 +183,12 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/space5"
                 android:layout_toRightOf="@+id/space5"
-                android:background="@android:color/darker_gray" />
+                android:background="@android:color/transparent" />
         </RelativeLayout>
 
         <ImageButton
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"

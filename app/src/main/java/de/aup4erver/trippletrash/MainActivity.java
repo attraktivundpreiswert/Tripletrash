@@ -1,7 +1,7 @@
 package de.aup4erver.trippletrash;
 
 import android.content.ClipData;
-import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnLongClickListener, View.OnDragListener {
 
@@ -23,8 +25,9 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
     TagImageView[] imageViewcards;
     Cards cards;
     Wurfel wurfel;
-    int currentpos = 0;
-    int tempcounter;
+    int currentpos;
+    int tempcounter = 0;
+    int with;
 
 
     @Override
@@ -93,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             imageViewcards[i].setTag(String.valueOf(p4[i - 18]));
         }
 
+        this.with = with;
+
         for (GridLayout gridLayouts : gridLayout) {
             gridLayouts.setOnDragListener(this);
         }
@@ -106,36 +111,54 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 @Override
                 public boolean onDrag(View v, DragEvent event) {
                     if (event.getAction() == DragEvent.ACTION_DROP) {
-                        int state = currentpos;
 
-                        String[] check;
+                        int zug = wurfel.asint();
 
-                        switch (state) {
-                            case 0:
-                                check = getResources().getStringArray(R.array.rest);
-                                break;
-                            case 1:
-                                check = getResources().getStringArray(R.array.bio);
-                                break;
-                            case 2:
-                                check = getResources().getStringArray(R.array.reclye);
-                                break;
-                            default:
-                                check = null;
-                        }
+                        if (zug == 1 || zug == 0) {
 
-                        String tag = ((TagImageView) event.getLocalState()).getStringTag();
+                            tempcounter++;
 
-                        tag = getResources().getResourceEntryName(Integer.parseInt(tag));
+                            int state = currentpos;
 
-                        for (String s : check) {
-                            if (s.equals(tag)) {
-                                View view = (View) event.getLocalState();
-                                ViewGroup owner = (ViewGroup) view.getParent();
-                                owner.removeView(view);
+                            String[] check;
+
+                            switch (state) {
+                                case 0:
+                                    check = getResources().getStringArray(R.array.rest);
+                                    break;
+                                case 1:
+                                    check = getResources().getStringArray(R.array.bio);
+                                    break;
+                                case 2:
+                                    check = getResources().getStringArray(R.array.reclye);
+                                    break;
+                                default:
+                                    check = null;
+                            }
+
+                            String tag = ((TagImageView) event.getLocalState()).getStringTag();
+
+                            tag = getResources().getResourceEntryName(Integer.parseInt(tag));
+
+                            assert check != null;
+                            for (String s : check) {
+                                if (s.equals(tag)) {
+                                    View view = (View) event.getLocalState();
+                                    ViewGroup owner = (ViewGroup) view.getParent();
+                                    owner.removeView(view);
+                                }
+                            }
+
+                            //Zug 0 special
+                            if (zug == 0 && tempcounter == 3) {
+                                nextPlayer();
+                            }
+                            else if (zug == 1 && tempcounter == 4) {
+                                nextPlayer();
                             }
                         }
                     }
+
                     return true;
                 }
             });
@@ -145,15 +168,24 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
 
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        wurfel = new Wurfel();
+
+        currentpos = randInt(0, 2);
+        rotate();
+        nextPlayer();
+    }
+
+
+    @Override
     public boolean onLongClick(View v) {
 
-        makeitfly(v);
-        /*
         int state = wurfel.asint();
 
         if (state == 0) {
 
-            GridLayout gridLayout = (GridLayout) ((ViewGroup) v.getParent());
+            GridLayout gridLayout = (GridLayout) v.getParent();
 
             if (gridLayout.getId() == R.id.gridlayout_player1 && wurfel.getPlayer() == 0) {
                 makeitfly(v);
@@ -167,16 +199,30 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
             if (gridLayout.getId() == R.id.gridlayout_player4 && wurfel.getPlayer() == 3) {
                 makeitfly(v);
             }
-            makeitfly(v);
+
         }
         else if (state == 1) {
             makeitfly(v);
         }
+
         else if (state == 4) {
-            makeitfly(v);
+            GridLayout gridLayout = (GridLayout) v.getParent();
+
+            if (gridLayout.getId() == R.id.gridlayout_player1 && wurfel.getPlayer() == 0) {
+                makeitfly(v);
+            }
+            if (gridLayout.getId() == R.id.gridlayout_player2 && wurfel.getPlayer() == 1) {
+                makeitfly(v);
+            }
+            if (gridLayout.getId() == R.id.gridlayout_player3 && wurfel.getPlayer() == 2) {
+                makeitfly(v);
+            }
+            if (gridLayout.getId() == R.id.gridlayout_player4 && wurfel.getPlayer() == 3) {
+                makeitfly(v);
+            }
         }
         else if (state == 5) {
-            GridLayout gridLayout = (GridLayout) ((ViewGroup) v.getParent());
+            GridLayout gridLayout = (GridLayout) v.getParent();
 
             if (gridLayout.getId() != R.id.gridlayout_player1 && wurfel.getPlayer() == 0) {
                 makeitfly(v);
@@ -191,18 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
                 makeitfly(v);
             }
         }
-        */
         return false;
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        wurfel = new Wurfel();
-        ((ImageView) findViewById(R.id.imageView)).setImageDrawable(wurfel.asbitmap());
-
-        currentpos = (int) Math.floor(Math.random() * 2);
-        rotate();
     }
 
     public void makeitfly(View v) {
@@ -216,38 +251,63 @@ public class MainActivity extends AppCompatActivity implements View.OnLongClickL
         if (event.getAction() == DragEvent.ACTION_DROP) {
             int state = wurfel.asint();
 
-            if (state == 0) {
-                //let the other handler handel this shit
-            } else if (state == 1) {
+            if (state == 4 || state == 5) {
+                tempcounter++;
 
-            } else if (state == 4) {
+                View view = (View) event.getLocalState();
+                ViewGroup owner = (ViewGroup) view.getParent();
+                owner.removeView(view);
 
-            } else if (state == 5) {
+                GridLayout container = (GridLayout) v;
+                container.addView(view);
+                view.setVisibility(View.VISIBLE);
 
+
+                if (tempcounter == 3) {
+                    nextPlayer();
+                }
             }
-            return false;
         }
         return true;
     }
 
     public void rotate() {
-        FrameLayout frameLayoutbio = (FrameLayout) findViewById(R.id.framelayout_bio);
-        FrameLayout frameLayoutrest = (FrameLayout) findViewById(R.id.frameLayout_rest);
-        FrameLayout frameLayoutrecyle = (FrameLayout) findViewById(R.id.framelayout_recyle);
 
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.RelativeLayoutPicutre);
         if (currentpos == 0) {
-            frameLayoutbio.setBackgroundColor(Color.GRAY);
-            frameLayoutrecyle.setBackgroundColor(Color.GRAY);
-            frameLayoutrest.setBackgroundColor(Color.TRANSPARENT);
+            relativeLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageDecoder.decodeSampledBitmapFromResource(getResources(), R.drawable.m4, with, with)));
         } else if (currentpos == 1) {
-            frameLayoutbio.setBackgroundColor(Color.GRAY);
-            frameLayoutrecyle.setBackgroundColor(Color.TRANSPARENT);
-            frameLayoutrest.setBackgroundColor(Color.GRAY);
+            relativeLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageDecoder.decodeSampledBitmapFromResource(getResources(), R.drawable.m2, with, with)));
         } else if (currentpos == 2) {
-            frameLayoutbio.setBackgroundColor(Color.TRANSPARENT);
-            frameLayoutrecyle.setBackgroundColor(Color.GRAY);
-            frameLayoutrest.setBackgroundColor(Color.GRAY);
+            relativeLayout.setBackgroundDrawable(new BitmapDrawable(getResources(), ImageDecoder.decodeSampledBitmapFromResource(getResources(), R.drawable.m1, with, with)));
         }
+    }
+
+    public void nextPlayer() {
+        View players[] = {findViewById(R.id.scrollView_player1), findViewById(R.id.scrollView_player2), findViewById(R.id.scrollView_player3), findViewById(R.id.scrollView_player4)};
+        wurfel.nextPlayer();
+        wurfel.roll();
+        findViewById(R.id.imageView).setBackgroundDrawable(new BitmapDrawable(ImageDecoder.decodeSampledBitmapFromResource(getResources(), wurfel.asResDrawble(), with, with)));
+
+        for (int i = 0; i <= 3; i++) {
+            if (i == wurfel.getPlayer()) {
+                players[i].setBackgroundResource(R.color.colorPlay);
+            }
+            else {
+                players[i].setBackgroundResource(R.color.colorFeld);
+            }
+        }
+        tempcounter = 0;
+
+        if (wurfel.asint() == 2 || wurfel.asint() == 3)  {
+            rotate();
+            nextPlayer();
+        }
+    }
+
+    private int randInt(int min, int max) {
+        Random rand = new Random();
+        return rand.nextInt(max - min + 1) + min;
     }
 
 }

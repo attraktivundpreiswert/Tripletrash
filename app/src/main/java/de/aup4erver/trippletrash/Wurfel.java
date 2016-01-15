@@ -1,8 +1,5 @@
 package de.aup4erver.trippletrash;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-
 import java.util.Random;
 
 /**
@@ -10,11 +7,12 @@ import java.util.Random;
  */
 public class Wurfel {
     private int state = 0;
-    private boolean locked;
     private int openstate = 0;
 
+    private int[] wurfelID = {R.drawable.w1, R.drawable.w2, R.drawable.w3, R.drawable.w4, R.drawable.w5, R.drawable.w6};
 
-    private int player = 0;
+
+    private int player = -1;
 
     public Wurfel() {
         roll();
@@ -23,12 +21,6 @@ public class Wurfel {
 
     public void roll() {
         state = randInt(0, 5);
-
-        if (player != 3)
-            player += player;
-        else
-            player = 0;
-
     }
 
     private int randInt(int min, int max) {
@@ -41,44 +33,11 @@ public class Wurfel {
     }
 
     public int asint() {
-        return 0;//state;
+        return state;//state;
     }
 
-    public ColorDrawable asbitmap() {
-
-        ColorDrawable colorDrawable;
-        switch (state) {
-            case 0:
-                colorDrawable = new ColorDrawable(Color.RED);
-                break;
-            case 1:
-                colorDrawable = new ColorDrawable(Color.GREEN);
-                break;
-            case 2:
-                colorDrawable = new ColorDrawable(Color.YELLOW);
-                break;
-            case 3:
-                colorDrawable = new ColorDrawable(Color.BLACK);
-                break;
-            case 4:
-                colorDrawable = new ColorDrawable(Color.WHITE);
-                break;
-            case 5:
-                colorDrawable = new ColorDrawable(Color.MAGENTA);
-                break;
-            default:
-                colorDrawable = null;
-                break;
-        }
-        return colorDrawable;
-    }
-
-    public boolean getLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
+    public int asResDrawble (){
+        return wurfelID[state];//state;
     }
 
     public int getPlayer() {
@@ -94,5 +53,14 @@ public class Wurfel {
 
     public int getDeckel() {
         return openstate;
+    }
+
+    public void nextPlayer() {
+        if (player == 3) {
+            player = 0;
+        }
+        else {
+            player++;
+        }
     }
 }
